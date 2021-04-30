@@ -1,0 +1,402 @@
+<html>
+<head>
+<title>Mood Buddy!</title>
+<style>
+body {
+  background-image: url("AV_SITE_NEW.jpg");
+  background-repeat: no-repeat;
+  background-size: 1600px 800px;
+}
+</style>
+</head>
+
+<script>
+var index=0;
+var parseData=null;
+var parseAnswersData=null;
+var moodDisplay=null;
+var holdQuestions=[];
+var holdQuestionsCounter = 0;
+var angryCounter = 0;
+var happyCounter = 0;
+var lovingCounter = 0;
+var sadCounter = 0;
+
+function startbutton(){
+	
+	parseData = JSON.parse(MoodBuddyQuestions);	//JSON.parse(MoodBuddyQuestions) is the array of the JSON file and parseData is the variable that holds all of the file.
+	parseAnswersData = JSON.parse(MoodBuddyAnswers);
+	showQuestion(); // this is the function that will show the questions and answers from the JSON file...
+	document.getElementById("nextButtonId").style.visibility="visible";	
+	var next = "<img src='Next_Button_IMG.png' width=50 height=25 onclick='nextbutton()' id='nextButtonId'>";
+	next;
+}
+
+function matchesHoldQuestions(checkValue){
+	var questionMatched = false; //questionMatched is a boolean variable.
+	for(var i=0;i<holdQuestions.length;i++){
+		if(checkValue==holdQuestions[i]){
+			questionMatched = true;
+		}
+	}
+	return questionMatched; // this returns the boolean's value back to us...
+} 
+
+function increaseCounter(answerValue){
+	if(answerValue == "Sad"){ //increases the value of the correct result when the answer option is picked
+		sadCounter++;
+	}
+	else if(answerValue == "Angry"){
+		angryCounter++;
+	}
+	else if(answerValue == "Loving"){
+		lovingCounter++;
+	}
+	else if(answerValue == "Happy"){
+		happyCounter++;
+	}
+}
+
+function checkAnswers(){
+	var answersOnPage = document.getElementsByName("answer"); //makes it easier to use this line of code multiple times by storing it in a variable...
+	
+	for (var x=0;x<answersOnPage.length;x++){
+	var answerValue = parseAnswersData[index].answer[x];
+		//alert("x" + answersOnPage[x]);
+		if(answersOnPage[x].checked){ //checks to see which of the answers are clicked...
+			increaseCounter(answerValue);
+			
+			
+		}
+	}
+	
+}
+
+
+function showQuestion(){
+	index = Math.floor(Math.random()*parseData.length); //This line randomizes the questions. 
+	var matchedResult = matchesHoldQuestions(index); //the variable now holds the boolean value...
+	
+	if(parseData.length==holdQuestions.length){
+		document.getElementById("buttons").innerHTML="Please go back and select some answers to get your result.";
+		if(sadCounter>happyCounter){
+			document.getElementById("buttons").innerHTML = "<p style='font-size:50px'>You are sad...</p>" + "</br>" + "</br>" + "</br>" + "<img src='sadEmoji.jpg' width=400 height=200>" + "</br>" + "</br>" + "<audio controls> <source src='Sad_Music.m4a' type='audio/mpeg'> </audio>";
+		}
+		else if(happyCounter>lovingCounter){
+			document.getElementById("buttons").innerHTML = "<p style='font-size:50px'>You are happy!</p>" + "</br>" + "</br>" + "</br>" + "<img src='happyEmoji.jpg' width=400 height=200>" + "</br>" + "</br>" + "<audio controls> <source src='Happy_Music.m4a' type='audio/mpeg'> </audio>" ;
+		}
+		else if(lovingCounter>angryCounter){
+			document.getElementById("buttons").innerHTML = "<p style='font-size:50px'>You are loving!</p>" + "</br>" + "</br>" + "</br>" + "<img src='lovingEmoji.jpg' width=400 height=200>" + "</br>" + "</br>" + "<audio controls> <source src='Loving_Music.m4a' type='audio/mpeg'> </audio>";
+		}
+		else if(angryCounter>sadCounter){
+			document.getElementById("buttons").innerHTML = "<p style='font-size:50px'>You are angry...</p>" + "</br>" + "</br>" + "</br>" + "<img src='angryEmoji.jpg' width=400 height=200>" + "</br>" + "</br>" + "<audio controls> <source src='Sad_Music.m4a' type='audio/mpeg'> </audio>";
+		}
+		
+		//this shows that when holdQuestions(the questions already seen) holds the same amount of questions as parseData(the original array) then the quiz is finished...
+	}
+	else{
+		while(matchedResult==true){ //while the question number in holdQuestions has already been shown, it shows a new random question...
+			index = Math.floor(Math.random()*parseData.length); //gives new randomized question
+			matchedResult = matchesHoldQuestions(index);
+		}
+		holdQuestions[holdQuestionsCounter] = index;
+		holdQuestionsCounter++;		
+		var answerData=parseData[index].answer;
+		moodDisplay = "<table> <tr> <td>" + "<b>" + parseData[index].question + "</br>" + "</b>" + "</td> </tr>";
+		
+		for(i=0;i<answerData.length;i++){
+			moodDisplay = moodDisplay + "<tr> <td>" + "<b>" + "<input type='radio' id='ans0' name='answer' value=" + answerData[i] + ">" + answerData[i] + "<br />" + "</b>" + "</td> </tr>";
+		}
+		moodDisplay = moodDisplay + "</table>";
+		document.getElementById("buttons").innerHTML=moodDisplay;
+	}
+	
+}
+
+function nextbutton(){
+	checkAnswers();
+	showQuestion();
+}
+</script>
+<body>
+<table width=100%>
+<tr>
+<td align="left" width=25%>
+</td>
+<td align="center" width=50%>
+<b><p style="font-size:50px">Mood Buddy!</p></b>
+<h4>Welcome to Mood Buddy! Where you can vent about your feelings and take short quizzes that will make you smile! Hit the start button to begin and click the next button to go to the next question. Have fun exploring Mood Buddy!</h4>
+
+
+
+</td>
+<td align="right" width=25%>
+</td>
+</tr>
+
+<tr>
+<td>
+&nbsp;
+</td>
+</tr>
+
+
+<tr>
+<td align="left" width=25%>
+</td>
+<td align="center" width=50%>
+<div id="buttons">
+<img src="Start_Button_IMG.png" width=50 height=25 onclick="startbutton()" id="startButtonId">
+<!--<button  onclick="startbutton()" class="" id="startButtonId">START</button>-->
+</div>
+</td>
+<td align="right" width=25%>
+</td>
+</tr>
+
+<tr>
+<td>
+&nbsp;
+</td>
+</tr>
+
+
+<tr>
+<td align="left" width=25%>
+</td>
+<td align="center" width=50%>
+<div id="next">
+<img src="Next_Button_IMG.png" width=50 height=25 onclick="nextbutton()" id="nextButtonId">
+<!-- <button id="nextButtonId" onclick="nextbutton()" class="">NEXT</button> -->
+</div>
+</td>
+<td align="right" width=25%>
+</td>
+</tr>
+</table>
+</body>
+<script>
+var MoodBuddyQuestions = '[\
+{"question": "What color appeals to you today?", \
+"answer":[ "Blue", \
+ "Pink", \
+ "Yellow", \
+ "Red"] \
+},\
+{"question": "What time of day do you prefer?", \
+"answer":[ "Morning, when there are lots of chriping birds to listen to!", \
+ "Afternoon, when it is warm and comfortable!", \
+ "Evening, when I can be in the dark.", \
+ "I do not like any part of the day."] \
+},\
+{"question": "Which of these characters from Harry Potter can you relate to the most today?", \
+"answer":[ "Ron Weasley",\
+ "Draco Malfoy", \
+ "Lily Potter", \
+ "Moaning Myrtle"] \
+},\
+{"question": "Which character from Inside Out do you like the most?", \
+"answer":[ "Anger", \
+ "Joy", \
+ "Sadness", \
+ "I do not know."] \
+},\
+{"question": "Which Keeper of the Lost Cities ability do you have?", \
+"answer":[ "Empath", \
+ "Flasher", \
+ "Inflictor", \
+ "I do not know"] \
+},\
+{"question": "What weather do you like the best?", \
+"answer":[ "Warm and rainy", \
+ "Warm and sunny", \
+ "Cold and sunny", \
+ "Cold and rainy"] \
+},\
+{"question": "Would you rather go to Exillium or Foxfire?", \
+"answer":[ "Foxfire!", \
+ "Exillium", \
+ "Foxfire, I guess.", \
+ "I do not care. OR I do not know what that is. "] \
+},\
+{"question": "How would you deal with problems today?", \
+"answer":[ "Take it head on!", \
+ "Pull the covers over my head and wait for it to go away.", \
+ "Fight it.", \
+ "If it is living, speak to it and ask it to stop. If it is a thing, ask someone else to help me get rid of it."] \
+},\
+{"question": "If your parents said you could not go to the party you have been looking forward to all year and instead had to visit family, what would you do?", \
+"answer":[ "Throw a tantrum", \
+ "Be sad in your room", \
+ "You would rather visit family than go to a party.", \
+ "Be excited!"] \
+},\
+{"question": "If you like to read books, what book genres do you like to read?", \
+"answer":[ "I DO NOT LIKE TO READ BOOKS!!!", \
+ "Romance", \
+ "Humour", \
+ "A book where everyone dies."] \
+},\
+{"question": "What flavor of food would you like to eat right now?", \
+"answer":[ "Spicy", \
+ "Salty", \
+ "Sweet!", \
+ "I could eat anything right now."] \
+},\
+{"question": "After you take this quiz, what are you most likely to do?", \
+"answer":[ "Curl up on the couch with a good book and hot chocolate.", \
+ "Take another quiz.", \
+ "Smash things on the floor.", \
+ "Cry..."] \
+},\
+{"question": "Who is your Greek godly parent?", \
+"answer":[ "Ares", \
+ "Aphrodite", \
+ "Apollo", \
+ "Demeter"] \
+},\
+{"question": "What song do you like out of these?", \
+"answer":[ "Cant stop the Feeling by Justin Timberlake", \
+ "Armor by Landon Austin", \
+ "you broke me first by Tate Mcrae", \
+ "I do not like these songs."] \
+},\
+{"question": "What is your hobby?", \
+"answer":[ "Going around hugging people!", \
+ "Reading or Singing or Dancing", \
+ "Crying", \
+ "Smashing things"] \
+},\
+{"question": "What beverage do you think matches your soul right now?", \
+"answer":[ "Any Soda", \
+ "Coffee", \
+ "Water", \
+ "No beverage could describe my soul."] \
+},\
+{"question": "What movie would you watch out of these options?", \
+"answer":[ "Inside Out", \
+ "Sound of Music", \
+ "Home Alone", \
+ "I hate movies..."] \
+},\
+{"question": "What is your favorite holiday?", \
+"answer":[ "Christmas", \
+ "Halloween", \
+ "Valentine", \
+ "I do not like holidays."] \
+}\
+]';
+</script>
+<script>
+var MoodBuddyAnswers = '[\
+{"question": "What color appeals to you today?", \
+"answer":[ "Sad", \
+ "Loving", \
+ "Happy", \
+ "Angry"] \
+},\
+{"question": "What time of day do you prefer?", \
+"answer":[ "Happy", \
+ "Loving", \
+ "Sad", \
+ "Angry"] \
+},\
+{"question": "Which of these characters from Harry Potter can you relate to the most today?", \
+"answer":[ "Happy",\
+ "Angry", \
+ "Loving", \
+ "Sad"] \
+},\
+{"question": "Which character from Inside Out do you like the most?", \
+"answer":[ "Angry", \
+ "Happy", \
+ "Sad", \
+ "Loving"] \
+},\
+{"question": "Which Keeper of the Lost Cities ability do you have?", \
+"answer":[ "Loving", \
+ "Happy", \
+ "Angry", \
+ "Sad"] \
+},\
+{"question": "What weather do you like the best?", \
+"answer":[ "Loving", \
+ "Happy", \
+ "Angry", \
+ "Sad"] \
+},\
+{"question": "Would you rather go to Exillium or Foxfire?", \
+"answer":[ "Happy", \
+ "Sad", \
+ "Loving", \
+ "Anger"] \
+},\
+{"question": "How would you deal with problems today?", \
+"answer":[ "Happy", \
+ "Sad", \
+ "Angry", \
+ "Loving"] \
+},\
+{"question": "If your parents said you could not go to the party you have been looking forward to all year and instead had to visit family, what would you do?", \
+"answer":[ "Angry", \
+ "Sad", \
+ "Loving", \
+ "Happy"] \
+},\
+{"question": "If you like to read books, what book genres do you like to read?", \
+"answer":[ "Angry", \
+ "Loving", \
+ "Happy", \
+ "Sad"] \
+},\
+{"question": "What flavor of food would you like to eat right now?", \
+"answer":[ "Angry", \
+ "Happy", \
+ "Loving", \
+ "Sad"] \
+},\
+{"question": "After you take this quiz, what are you most likely to do?", \
+"answer":[ "Happy", \
+ "Loving", \
+ "Angry", \
+ "Sad"] \
+},\
+{"question": "Who is your Greek godly parent?", \
+"answer":[ "Angry", \
+ "Loving", \
+ "Happy", \
+ "Sad"] \
+},\
+{"question": "What song do you like out of these?", \
+"answer":[ "Happy", \
+ "Loving", \
+ "Sad", \
+ "Angry"] \
+},\
+{"question": "What is your hobby?", \
+"answer":[ "Loving", \
+ "Happy", \
+ "Sad", \
+ "Angry"] \
+},\
+{"question": "What beverage do you think matches your soul right now?", \
+"answer":[ "Happy", \
+ "Angry", \
+ "Sad", \
+ "Loving"] \
+},\
+{"question": "What movie would you watch out of these options?", \
+"answer":[ "Sad", \
+ "Loving", \
+ "Happy", \
+ "Angry"] \
+},\
+{"question": "What is your favorite holiday?", \
+"answer":[ "Happy", \
+ "Angry", \
+ "Loving", \
+ "Sad"] \
+}\
+]';
+</script>
+</html>
