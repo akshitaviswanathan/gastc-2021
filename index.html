@@ -7,6 +7,10 @@ body {
   background-repeat: no-repeat;
   background-size: 1600px 800px;
 }
+
+div.nextButtonDiv{
+  display;none;
+}
 </style>
 </head>
 
@@ -27,51 +31,10 @@ function startbutton(){
 	parseData = JSON.parse(MoodBuddyQuestions);	//JSON.parse(MoodBuddyQuestions) is the array of the JSON file and parseData is the variable that holds all of the file.
 	parseAnswersData = JSON.parse(MoodBuddyAnswers);
 	showQuestion(); // this is the function that will show the questions and answers from the JSON file...
-	document.getElementById("nextButtonId").style.visibility="visible";	
-	var next = "<img src='Next_Button_IMG.png' width=50 height=25 onclick='nextbutton()' id='nextButtonId'>";
-	next;
-}
-
-function matchesHoldQuestions(checkValue){
-	var questionMatched = false; //questionMatched is a boolean variable.
-	for(var i=0;i<holdQuestions.length;i++){
-		if(checkValue==holdQuestions[i]){
-			questionMatched = true;
-		}
-	}
-	return questionMatched; // this returns the boolean's value back to us...
-} 
-
-function increaseCounter(answerValue){
-	if(answerValue == "Sad"){ //increases the value of the correct result when the answer option is picked
-		sadCounter++;
-	}
-	else if(answerValue == "Angry"){
-		angryCounter++;
-	}
-	else if(answerValue == "Loving"){
-		lovingCounter++;
-	}
-	else if(answerValue == "Happy"){
-		happyCounter++;
-	}
-}
-
-function checkAnswers(){
-	var answersOnPage = document.getElementsByName("answer"); //makes it easier to use this line of code multiple times by storing it in a variable...
 	
-	for (var x=0;x<answersOnPage.length;x++){
-	var answerValue = parseAnswersData[index].answer[x];
-		//alert("x" + answersOnPage[x]);
-		if(answersOnPage[x].checked){ //checks to see which of the answers are clicked...
-			increaseCounter(answerValue);
-			
-			
-		}
-	}
-	
+	var divTagElement = document.getElementById("next");
+    divTagElement.style.display = "block";
 }
-
 
 function showQuestion(){
 	index = Math.floor(Math.random()*parseData.length); //This line randomizes the questions. 
@@ -117,6 +80,49 @@ function nextbutton(){
 	checkAnswers();
 	showQuestion();
 }
+
+function matchesHoldQuestions(checkValue){
+	var questionMatched = false; //questionMatched is a boolean variable.
+	for(var i=0;i<holdQuestions.length;i++){
+		if(checkValue==holdQuestions[i]){
+			questionMatched = true;
+		}
+	}
+	return questionMatched; // this returns the boolean's value back to us...
+} 
+
+function increaseCounter(answerValue){
+	if(answerValue == "Sad"){ //increases the value of the correct result when the answer option is picked
+		sadCounter++;
+	}
+	else if(answerValue == "Angry"){
+		angryCounter++;
+	}
+	else if(answerValue == "Loving"){
+		lovingCounter++;
+	}
+	else if(answerValue == "Happy"){
+		happyCounter++;
+	}
+}
+
+function checkAnswers(){
+	var answersOnPage = document.getElementsByName("answer"); //makes it easier to use this line of code multiple times by storing it in a variable...
+	
+	for (var x=0;x<answersOnPage.length;x++){
+	var answerValue = parseAnswersData[index].answer[x];
+		//alert("x" + answersOnPage[x]);
+		if(answersOnPage[x].checked){ //checks to see which of the answers are clicked...
+			increaseCounter(answerValue);
+			
+			
+		}
+	}
+	
+}
+
+
+
 </script>
 <body>
 <table width=100%>
@@ -126,8 +132,6 @@ function nextbutton(){
 <td align="center" width=50%>
 <b><p style="font-size:50px">Mood Buddy!</p></b>
 <h4>Welcome to Mood Buddy! Where you can vent about your feelings and take short quizzes that will make you smile! Hit the start button to begin and click the next button to go to the next question. Have fun exploring Mood Buddy!</h4>
-
-
 
 </td>
 <td align="right" width=25%>
@@ -165,7 +169,7 @@ function nextbutton(){
 <td align="left" width=25%>
 </td>
 <td align="center" width=50%>
-<div id="next">
+<div id="next" style="display: none; ">
 <img src="Next_Button_IMG.png" width=50 height=25 onclick="nextbutton()" id="nextButtonId">
 <!-- <button id="nextButtonId" onclick="nextbutton()" class="">NEXT</button> -->
 </div>
